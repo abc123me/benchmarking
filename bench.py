@@ -24,12 +24,20 @@ def primes(buf, n):
 if __name__ == "__main__":
 	import time, sys
 	amount = 1000
+	benches = 1
 	if len(sys.argv) > 1:
 		amount = int(sys.argv[1])
+	if len(sys.argv) > 2:
+		benches = int(sys.argv[2])
 	def millis():
 		return int(time.time() * 1000.0)
 	buf = [0] * amount
-	start = millis()
-	primes(buf, amount)
-	took = millis() - start
-	print("[Python] Finding %i primes took %ims" % (amount, took))
+	times = [0] * benches
+	for i in range(0, benches):
+		start = millis()
+		primes(buf, amount)
+		times[i] = millis() - start
+	if len(times) == 1:
+		print("[Python] Finding %i primes took %ims" % (amount, times[i]))
+	else:
+		print("[Python] Finding %i primes took %s" % (amount, str(times)))

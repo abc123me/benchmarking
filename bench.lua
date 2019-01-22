@@ -26,12 +26,25 @@ function primes(buf, n)
 end
 
 amount = 1000
-if table.getn(arg) > 0 then
-	amount = tonumber(arg[1])
-end
+benches = 1
+if table.getn(arg) > 0 then amount = tonumber(arg[1]) end
+if table.getn(arg) > 1 then benches = tonumber(arg[2]) end
 buf = {}
-start = os.clock()
-primes(buf, amount)
-took = os.clock() - start
-took = math.floor(took * 1000)
-print("[Lua] Finding " .. amount .. " primes took " .. took .. "ms")
+times = {}
+for b=0, benches do
+	start = os.clock()
+	primes(buf, amount)
+	took = os.clock() - start
+	times[b] = math.floor(took * 1000)
+end
+s = "[Lua] Finding " .. amount .. " primes took "
+if benches == 1 then
+	s = s .. times[0] .. "ms"
+else
+	s = s .. "[" .. times[0]
+	for i=1, benches - 1 do
+		s = s .. ", " .. times[i]
+	end
+	s = s .. "]"
+end
+print(s)

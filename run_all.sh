@@ -1,15 +1,25 @@
 #!/bin/sh
-amount=1000
+amount=5000
+benches=1
 if [ $# -gt 0 ]; then amount=$1; fi
+if [ $# -gt 1 ]; then benches=$2; fi
 
-#./bench.lua $amount
-#./bench.js $amount
-#./bench.py $amount
-java bench $amount
-java -Djava.library.path=. bench_jni benchjni_gcc $amount
-java -Djava.library.path=. bench_jni benchjni_clang $amount
-java -Djava.library.path=. bench_jni benchjni_asm $amount
-./bench.gcc.c $amount
-./bench.clang.c $amount
-./bench.asm $amount
-./bench.cs $amount
+slow=0
+if [ $amount -gt 5000 ]; then
+	echo "Disabling Lua and Python due to their slow speed"
+	slow=1
+fi
+
+args="$amount $benches"
+
+if [ $slow -eq 0 ]; then ./bench.lua $args; fi
+./bench.js $args
+if [ $slow -eq 0 ]; then ./bench.py $args; fi
+java bench_src $args
+java -Djava.library.path=. bench_jni benchjni_gcc $args
+java -Djava.library.path=. bench_jni benchjni_clang $args
+# java -Djava.library.path=. bench_jni benchjni_asm $args
+./bench.gcc.c $args
+./bench.clang.c $args
+./bench.asm $args
+./bench.cs $args

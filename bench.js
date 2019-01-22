@@ -1,4 +1,4 @@
-#!/usr/bin/env node
+#!/usr/bin/nodejs
 
 function prime(n){
 	if(n == 2) return true;
@@ -26,12 +26,26 @@ function millis(){
 }
 
 var amount = 1000;
-process.argv.forEach(function(val, index, array) {
-	if(val.match(/[0-9]+/))
-		amount = val;
-});
-var buf = {};
-var start = millis();
-primes(amount, buf);
-var took = millis() - start;
-console.log("[NodeJS] Finding " + amount + " primes took " + took + "ms");
+var benches = 1;
+if(process.argv.length > 2)
+	amount = process.argv[2];
+if(process.argv.length > 3)
+	benches = process.argv[3];
+
+var buf = new Array(amount);
+var times = new Array(benches);
+for(var i = 0; i < benches - 1; i++){
+	var start = millis();
+	primes(amount, buf);
+	times[i] = millis() - start;
+}
+var s = "";
+if(benches == 1)
+	s = times[0] + "ms";
+else{
+	s = "[" + times[0];
+	for(var i = 0; i < times.length; i++)
+		s += ", " + times[i];
+	s += "]";
+}
+console.log("[NodeJS] Finding " + amount + " primes took " + s);
